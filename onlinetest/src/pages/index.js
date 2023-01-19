@@ -1,134 +1,245 @@
-import Head from "next/head";
-import Image from "next/image";
-import { Inter } from "@next/font/google";
-import styles from "@/styles/Home.module.scss";
+import * as React from "react";
+import PropTypes from "prop-types";
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import CssBaseline from "@mui/material/CssBaseline";
+import Divider from "@mui/material/Divider";
+import Drawer from "@mui/material/Drawer";
+import IconButton from "@mui/material/IconButton";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import HomeIcon from "@mui/icons-material/Home";
+import CampaignIcon from "@mui/icons-material/Campaign";
+import ReceiptIcon from "@mui/icons-material/Receipt";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import AutoStoriesIcon from "@mui/icons-material/AutoStories";
+import SportsScoreIcon from '@mui/icons-material/SportsScore';
+import MenuIcon from "@mui/icons-material/Menu";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
 import { useSession } from "next-auth/react";
-import { useEffect } from "react";
 import Router from "next/router";
-const inter = Inter({ subsets: ["latin"] });
+import { useEffect } from "react";
 
-export default function Home() {
+import Dashboard from "../component/dashboard";
+import Score from "../component/score";
+import Library from "../component/library";
+import Payment from "../component/payment";
+import CheckPayment from "../component/checkPayment";
+import AboutUs from "../component/aboutus";
+
+const drawerWidth = 240;
+
+export default function Home(props) {
   const { status, data } = useSession();
+  const [page, setPage] = React.useState("");
+  const { window } = props;
+  const [mobileOpen, setMobileOpen] = React.useState(false);
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
 
-  console.log("status > ", status);
+  const handleManu = (page) => {
+    console.log(page);
+    setPage(page);
+  };
+
   useEffect(() => {
     if (status === "unauthenticated") Router.replace("/auth/signin");
   }, [status]);
 
+  const drawer = (
+    <div>
+      <Toolbar />
+      <Divider />
+      <List>
+        <ListItem disablePadding>
+          <ListItemButton>
+            <ListItemIcon>
+              <HomeIcon />
+            </ListItemIcon>
+            <ListItemText
+              primary={"หน้าแรก"}
+              onClick={() => handleManu("Home")}
+            />
+          </ListItemButton>
+        </ListItem>
+        <Divider />
+        <ListItem disablePadding>
+          <ListItemButton>
+            <ListItemIcon>
+              <SportsScoreIcon />
+            </ListItemIcon>
+            <ListItemText
+              primary={"ตรวจสอบผลคะแนน"}
+              onClick={() => handleManu("Score")}
+            />
+          </ListItemButton>
+        </ListItem>
+        <Divider />
+        <ListItem disablePadding>
+          <ListItemButton>
+            <ListItemIcon>
+              <AutoStoriesIcon />
+            </ListItemIcon>
+            <ListItemText
+              primary={"ห้องสมุด"}
+              onClick={() => handleManu("Library")}
+            />
+          </ListItemButton>
+        </ListItem>
+        <Divider />
+        <ListItem disablePadding>
+          <ListItemButton>
+            <ListItemIcon>
+              <AttachMoneyIcon />
+            </ListItemIcon>
+            <ListItemText
+              primary={"การชำระเงิน"}
+              onClick={() => handleManu("Payment")}
+            />
+          </ListItemButton>
+        </ListItem>
+        <Divider />
+        <ListItem disablePadding>
+          <ListItemButton>
+            <ListItemIcon>
+              <ReceiptIcon />
+            </ListItemIcon>
+            <ListItemText
+              primary={"ตรวจสอบชำระเงิน"}
+              onClick={() => handleManu("Check")}
+            />
+          </ListItemButton>
+        </ListItem>
+        <Divider />
+        <ListItem disablePadding>
+          <ListItemButton>
+            <ListItemIcon>
+              <CampaignIcon />
+            </ListItemIcon>
+            <ListItemText
+              primary={"แจ้งปัญหา"}
+              onClick={() => handleManu("Aboutus")}
+            />
+          </ListItemButton>
+        </ListItem>
+      </List>
+      <Divider />
+    </div>
+  );
+
+  const main = () => {
+    switch (page) {
+      case "Home":
+        return <Dashboard />;
+        case "Score":
+        return <Score />;
+      case "Library":
+        return <Library />;
+      case "Payment":
+        return <Payment />;
+      case "Check":
+        return <CheckPayment />;
+      case "Aboutus":
+        return <AboutUs />;
+      default:
+        return <Dashboard />;
+    }
+  };
+
+  const container =
+    window !== undefined ? () => window().document.body : undefined;
+
   if (status === "authenticated") {
     return (
-      <>
-        <Head>
-          <title>Create Next App</title>
-          <meta name="description" content="Generated by create next app" />
-          <meta name="viewport" content="width=device-width, initial-scale=1" />
-          <link rel="icon" href="/favicon.ico" />
-        </Head>
-        <main className={styles.main}>
-          <div className={styles.description}>
-            <p>
-              Get started by editing&nbsp;
-              <code className={styles.code}>pages/index.js</code>
-            </p>
-            <div>
-              <a
-                href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                By{" "}
-                <Image
-                  src="/vercel.svg"
-                  alt="Vercel Logo"
-                  className={styles.vercelLogo}
-                  width={100}
-                  height={24}
-                  priority
-                />
-              </a>
-            </div>
-          </div>
-
-          <div className={styles.center}>
-            <Image
-              className={styles.logo}
-              src="/next.svg"
-              alt="Next.js Logo"
-              width={180}
-              height={37}
-              priority
-            />
-            <div className={styles.thirteen}>
-              <Image
-                src="/thirteen.svg"
-                alt="13"
-                width={40}
-                height={31}
-                priority
-              />
-            </div>
-          </div>
-
-          <div className={styles.grid}>
-            <a
-              href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-              className={styles.card}
-              target="_blank"
-              rel="noopener noreferrer"
+      <Box sx={{ display: "flex" }}>
+        <CssBaseline />
+        <AppBar
+          position="fixed"
+          sx={{
+            width: { sm: `calc(100% - ${drawerWidth}px)` },
+            ml: { sm: `${drawerWidth}px` },
+            backgroundColor: "#1c1d1f"
+          }}
+        >
+          <Toolbar>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              edge="start"
+              onClick={handleDrawerToggle}
+              sx={{ mr: 2, display: { sm: "none" } }}
             >
-              <h2 className={inter.className}>
-                Docs <span>-&gt;</span>
-              </h2>
-              <p className={inter.className}>
-                Find in-depth information about Next.js features and&nbsp;API.
-              </p>
-            </a>
-
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-              className={styles.card}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <h2 className={inter.className}>
-                Learn <span>-&gt;</span>
-              </h2>
-              <p className={inter.className}>
-                Learn about Next.js in an interactive course with&nbsp;quizzes!
-              </p>
-            </a>
-
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-              className={styles.card}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <h2 className={inter.className}>
-                Templates <span>-&gt;</span>
-              </h2>
-              <p className={inter.className}>
-                Discover and deploy boilerplate example Next.js&nbsp;projects.
-              </p>
-            </a>
-
-            <a
-              href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-              className={styles.card}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <h2 className={inter.className}>
-                Deploy <span>-&gt;</span>
-              </h2>
-              <p className={inter.className}>
-                Instantly deploy your Next.js site to a shareable URL
-                with&nbsp;Vercel.
-              </p>
-            </a>
-          </div>
-        </main>
-      </>
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6" noWrap component="div">
+              OPST : Online Police Skill Test
+            </Typography>
+          </Toolbar>
+        </AppBar>
+        <Box
+          component="nav"
+          sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+          aria-label="mailbox folders"
+        >
+          {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
+          <Drawer
+            container={container}
+            variant="temporary"
+            open={mobileOpen}
+            onClose={handleDrawerToggle}
+            ModalProps={{
+              keepMounted: true, // Better open performance on mobile.
+            }}
+            sx={{
+              display: { xs: "block", sm: "none" },
+              "& .MuiDrawer-paper": {
+                boxSizing: "border-box",
+                width: drawerWidth,
+              },
+            }}
+          >
+            {drawer}
+          </Drawer>
+          <Drawer
+            variant="permanent"
+            sx={{
+              display: { xs: "none", sm: "block" },
+              "& .MuiDrawer-paper": {
+                boxSizing: "border-box",
+                width: drawerWidth,
+              },
+            }}
+            open
+          >
+            {drawer}
+          </Drawer>
+        </Box>
+        <Box
+          component="main"
+          sx={{
+            flexGrow: 1,
+            p: 3,
+            width: { sm: `calc(100% - ${drawerWidth}px)` },
+          }}
+        >
+          <Toolbar />
+          <Typography paragraph>หมวดหมู่</Typography>
+          {main()}
+        </Box>
+      </Box>
     );
   }
 }
+
+Home.propTypes = {
+  /**
+   * Injected by the documentation to work in an iframe.
+   * You won't need it on your project.
+   */
+  window: PropTypes.func,
+};
